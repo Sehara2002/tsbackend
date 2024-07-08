@@ -164,11 +164,13 @@ app.post("/saveTemps",async (req,res)=>{
         { timeStamp: '09:00:00', temp: 24 }
     ];
 
-    timeTemps.map(td=>{
-        collection.insertOne({
+    timeTemps.map(async td=> {
+        let result = await collection.insertOne({
             timeStamp: td.timeStamp,
             temperature: td.temp
         })
+
+        console.log("result Id", result.insertedId);
     });
 
 
