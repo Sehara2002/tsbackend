@@ -143,6 +143,40 @@ app.post("/getFrontLight", (req, res) => {
     });
 })
 
+app.post("/saveTemps",async (req,res)=>{
+
+    const client = await getClient();
+    const db = client.db('TissueCulture');
+    const collection = db.collection('TempData');
+    const timeTemps = [
+        { timeStamp: '08:00:00', temp: 22 },
+        { timeStamp: '08:05:00', temp: 23 },
+        { timeStamp: '08:10:00', temp: 24 },
+        { timeStamp: '08:15:00', temp: 21 },
+        { timeStamp: '08:20:00', temp: 20 },
+        { timeStamp: '08:25:00', temp: 25 },
+        { timeStamp: '08:30:00', temp: 25 },
+        { timeStamp: '08:35:00', temp: 26 },
+        { timeStamp: '08:40:00', temp: 27 },
+        { timeStamp: '08:45:00', temp: 21 },
+        { timeStamp: '08:50:00', temp: 22 },
+        { timeStamp: '08:55:00', temp: 20 },
+        { timeStamp: '09:00:00', temp: 24 }
+    ];
+
+    timeTemps.map(td=>{
+        collection.insertOne({
+            timeStamp: td.timeStamp,
+            temperature: td.temp
+        })
+    });
+
+
+
+
+
+})
+
 app.listen(PORT, () => {
     console.log(`Local server is running on ${PORT}`);
 })
