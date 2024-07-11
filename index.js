@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const getClient = require('./db.js');
 const bodyParser = require('body-parser');
+const { setInterval } = require('timers');
 require('events').EventEmitter.defaultMaxListeners = 20;
 
 const app = express();
@@ -12,11 +13,13 @@ app.use(bodyParser.json());
 let lightState;
 let tempState;
 let humdState;
-let ard_light = { status: 'on', time: {
-    hour:0,
-    min:0,
-    sec:0
-} };
+let ard_light = {
+    status: 'on', time: {
+        hour: 0,
+        min: 0,
+        sec: 0
+    }
+};
 let ard_temp = 0;
 let ard_humd = 0;
 
@@ -77,15 +80,16 @@ app.get("/", async (req, res) => {
     const client = await getClient();
     const db = client.db("TissueCulture");
     const collection = db.collection("Users");
-    const result = await collection.insertOne({ UserId: 1, 
-        Username: "Shehara", 
-        Password: "1234" 
+    const result = await collection.insertOne({
+        UserId: 1,
+        Username: "Shehara",
+        Password: "1234"
     });
     console.log(result.insertedId);
     res.send({ "Insert ID": result.insertedId });
 })
 app.post("/light", (req, res) => {
-    res.send({Status: lightDataChanged, lightData: lightState});
+    res.send({ Status: lightDataChanged, lightData: lightState });
     lightDataChanged = false;
 });
 
@@ -104,7 +108,7 @@ app.post("/getTemp", async (req, res) => {
     const client = await getClient();
     const db = client.db("TissueCulture");
     const collection = db.collection("TempData");
-    
+
     res.send({ temp: temp.CurrentTemp });
     console.log(ard_temp);
 
@@ -143,7 +147,7 @@ app.post("/getFrontLight", (req, res) => {
     });
 })
 
-app.get("/saveTemps",async (req,res)=>{
+app.get("/saveTemps", async (req, res) => {
 
     const client = await getClient();
     const db = client.db('TissueCulture');
@@ -165,20 +169,23 @@ app.get("/saveTemps",async (req,res)=>{
     ];
 
     const result = await collection.insertMany(timeTemps);
-    res.send({Message: `${result.insertedCount} documents were inserted`}); 
+    res.send({ Message: `${result.insertedCount} documents were inserted` });
 })
 
-app.get("/getDbTemps",async (req,res)=>{
+app.get("/getDbTemps", async (req, res) => {
     const client = await getClient();
     const db = client.db('TissueCulture');
     const collection = db.collection('TempData');
-    const result = collection.find({});
-    result.then(response=>{
-        res.send({Data: response}).status(200);
-    }).catch(err=>{
-        res.send({error:err}).status(500);
-    })
-    
+    const intervalId = setInterval(() => {
+        const result = collection.find().toArray();
+        result.then(response => {
+            res.send({ Data: response });
+        }).catch(err => {   
+            res.send({ Error: err });
+        })
+    },1000);
+
+    return() => clearInterval(intervalId);
 })
 
 app.listen(PORT, () => {
