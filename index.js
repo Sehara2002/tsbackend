@@ -14,7 +14,7 @@ let lightState;
 let tempState;
 let humdState;
 let ard_light = {
-    status: 'on', time: {
+    status: 'ON', time: {
         hour: 0,
         min: 0,
         sec: 0
@@ -176,16 +176,13 @@ app.get("/getDbTemps", async (req, res) => {
     const client = await getClient();
     const db = client.db('TissueCulture');
     const collection = db.collection('TempData');
-    const intervalId = setInterval(() => {
-        const result = collection.find().toArray();
-        result.then(response => {
-            res.send({ Data: response });
-        }).catch(err => {   
-            res.send({ Error: err });
-        })
-    },1000);
+    const result = collection.find().toArray();
+    // result.then(response => {
+    //     res.send({ Data: response });
+    // }).catch(err => {
+    //     res.send({ Error: err });
+    // })
 
-    return() => clearInterval(intervalId);
 })
 
 app.listen(PORT, () => {
