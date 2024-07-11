@@ -143,7 +143,7 @@ app.post("/getFrontLight", (req, res) => {
     });
 })
 
-app.post("/saveTemps",async (req,res)=>{
+app.get("/saveTemps",async (req,res)=>{
 
     const client = await getClient();
     const db = client.db('TissueCulture');
@@ -164,19 +164,21 @@ app.post("/saveTemps",async (req,res)=>{
         { timeStamp: '09:00:00', temp: 24 }
     ];
 
-    timeTemps.map(async td=> {
-        let result = await collection.insertOne({
-            timeStamp: td.timeStamp,
-            temperature: td.temp
-        })
+    const result = await collection.insertMany(timeTemps);
+    res.send({Message: `${result.insertedCount} documents were inserted`}); 
+})
 
-        console.log("result Id", result.insertedId);
-    });
-
-
-
-
-
+app.get("/getDbTemps",async (req,res)=>{
+    const client = await getClient();
+    const db = client.db('TissueCulture');
+    const collection = db.collection('TempData');
+    const result = collection.find({});
+    result.then(response=>{
+        res.send({Data: response}).status(200);
+    }).catch(err=>{
+        res.send({error:err}).status(500);
+    })
+    
 })
 
 app.listen(PORT, () => {
