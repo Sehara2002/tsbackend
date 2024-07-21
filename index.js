@@ -124,6 +124,7 @@ app.post("/getHumd", (req, res) => {
 app.post("/getLight", (req, res) => {
     const light = req.body;
     ard_light = light;
+    console.log(ard_light);
     res.send({ light: light.lightData });
 })
 
@@ -148,7 +149,6 @@ app.post("/getFrontLight", (req, res) => {
 })
 
 app.get("/saveTemps", async (req, res) => {
-
     const client = await getClient();
     const db = client.db('TissueCulture');
     const collection = db.collection('TempData');
@@ -172,16 +172,17 @@ app.get("/saveTemps", async (req, res) => {
     res.send({ Message: `${result.insertedCount} documents were inserted` });
 })
 
-app.get("/getDbTemps", async (req, res) => {
+app.post("/getDbTemps", async (req, res) => {
     const client = await getClient();
     const db = client.db('TissueCulture');
     const collection = db.collection('TempData');
     const result = collection.find().toArray();
-    // result.then(response => {
-    //     res.send({ Data: response });
-    // }).catch(err => {
-    //     res.send({ Error: err });
-    // })
+    result.then(response => {
+        res.send({ Data: response });
+    }).catch(err => {
+        console.log(err);
+        res.send({ Error: err });
+    })
 
 })
 
