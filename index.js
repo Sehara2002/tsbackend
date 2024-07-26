@@ -141,9 +141,9 @@ app.post("/getFrontLight", (req, res) => {
     res.send({
         status: ard_light.status,
         onTime: {
-            hour: 8,
-            min: 25,
-            sec: 49
+            hour: ard_light.DurationHour,
+            min: ard_light.DurationMin,
+            sec: ard_light.DurationSec
         }
     });
 })
