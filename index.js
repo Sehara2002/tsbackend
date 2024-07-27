@@ -139,10 +139,10 @@ app.post("/getFrontHumd", (req, res) => {
 })
 app.post("/getFrontLight", (req, res) => {
     res.send({
-        status: ard_light.status,
-        onTime: {
+        onTime: { 
+            status: ard_light.LightStatus,
             hour: ard_light.DurationHour,
-            min: ard_light.DurationMin,
+            min: ard_light.DurationMin, 
             sec: ard_light.DurationSec
         }
     });
